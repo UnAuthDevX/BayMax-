@@ -8,6 +8,8 @@ BayMax! is an AI-powered personal healthcare assistant developed by the Unauthor
 4. Dhanush R
 
 # Files in the Repo:
+##Frontend files
+This is a Medical chatbot interface named Baymax, built using Flask for the backend and basic HTML/CSS for the frontend. The chatbot allows users to interact with Baymax by sending messages, and Baymax responds based on backend AI processing.
 
 
 ## BayMax!.fig
