@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baymax - Medical AI Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Baymax - The Medical AI Chatbot</h2>
+            <p>Ask your health-related questions, and the AI will respond with advice and information</p>
+        </div>
+        <div class="chat-window" id="chat-window">
+            <div class="message ai-message">
+                <img src="static/server.jpg" alt="Server Icon" class="icon">
+                <p>Hi, I am Baymax. Your Personal health care companion</p>
+            </div>
+        </div>
+        <div class="chat-input">
+            <form id="chat-form">
+                <input type="text" id="user-input" name="user-input" placeholder="Leave your medical query here">
+                <button type="submit" id="send-btn">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('chat-form').addEventListener('submit', function(event) {
+            event.preventDefault();  
+
+            const userInput = document.getElementById('user-input').value;
+
+            if (userInput.trim() === "") {
+                return;  
+            }
+
+            const chatWindow = document.getElementById('chat-window');
+            const userMessage = `<div class="message user-message"><p>${userInput}</p><img src="static/user.jpg" alt="User Icon" class="icon user-icon"></div>`;
+            chatWindow.innerHTML += userMessage;
+
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            const sendButton = document.getElementById('send-btn');
+            sendButton.disabled = true;
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'user-input': userInput
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const aiimage = '<img src="static/server.jpg" alt="Server Icon" class="icon">';
+                const aiMessage = `<div class="message ai-message">${aiimage}<p>${data.response}</p></div>`;
+                chatWindow.innerHTML += aiMessage;
+                document.getElementById('user-input').value = ''; 
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+                sendButton.disabled = false; 
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                sendButton.disabled = false; 
+            });
+        });
+    </script>
+</body>
+</html>
